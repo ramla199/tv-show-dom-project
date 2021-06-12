@@ -1,8 +1,43 @@
 //You can edit ALL of the code here
-function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+function setup(showsId) {
+  //const allEpisodes = getAllEpisodes();
+  //makePageForEpisodes(allEpisodes);
+  const allShows = getAllShows();
+  makePageForShows(allShows)
+
 };
+// select show
+
+function makePageForShows(allShows) {
+  const rootElem = document.getElementById("root");
+
+  // select List
+  const selectElm = document.createElement('select');
+  selectElm.setAttribute('name', 'selectEp');
+  selectElm.id = "filter";
+  allShows.map(opElm => {
+    const optionEl = selectElm.appendChild(document.createElement('option'));
+    optionEl.setAttribute('value', 'opEl');
+    optionEl.id = opElm.id
+    optionEl.textContent = `${opElm.name}`;
+    optionEl.addEventListener("click", e => {
+      const showsId = e.target.id;
+      getEpidoList(showsId);
+
+
+      // hEl.innerText = `Got ${0} / ${allShows.length} episode(s)`;
+    })
+  }
+
+  );
+  function getEpidoList(showsId) {
+    fetch(`https://api.tvmaze.com/shows/${showsId}/episodes`)
+      .then(res => res.json())
+      .then(episodeList => makePageForEpisodes(episodeList))
+      .catch(err => err)
+  };
+  rootElem.appendChild(selectElm);
+}
 
 // to remove from summary p tag
 function cleanSummary(epi) {
@@ -38,8 +73,10 @@ function makePageForEpisodes(episodeList) {
         }
 
       });
+
       hEl.innerText = `Got ${c.length} / ${episodeList.length} episode(s)`;
     })
+    //hEl.innerText = `Got ${episodeList.length} / ${episodeList.length} episode(s)`;
   }
   );
   rootElem.appendChild(selectEl);
